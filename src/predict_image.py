@@ -29,63 +29,113 @@ device = torch.device(
 
 def load_model():
 
-    # Create EfficientNet-B0
-    model = models.efficientnet_b0(
-        weights=None
-    )
-
-    # Get original classifier input features
-    in_features = model.classifier[1].in_features
-
-    # IMPORTANT:
-    # This MUST exactly match the architecture
-    # used during training.
-    #
-    # Training architecture:
-    #
-    # model.classifier[1] = nn.Sequential(
-    #     nn.Dropout(p=0.30),
-    #     nn.Linear(in_features, 2)
-    # )
-    #
-    # Therefore the saved checkpoint contains:
-    #
-    # classifier.1.0.weight
-    # classifier.1.0.bias
-    # classifier.1.1.weight
-    # classifier.1.1.bias
-
-    model.classifier[1] = nn.Sequential(
-        nn.Dropout(
-            p=0.30
-        ),
-        nn.Linear(
-            in_features,
-            2
-        )
-    )
-
+    # --------------------------------------------------------
     # Check model file
+    # --------------------------------------------------------
+
     if not MODEL_PATH.exists():
         raise FileNotFoundError(
             f"Model file not found: {MODEL_PATH}"
         )
 
-    # Load trained weights
+    # --------------------------------------------------------
+    # Load checkpoint FIRST
+    # --------------------------------------------------------
+
     state_dict = torch.load(
         MODEL_PATH,
         map_location=device,
         weights_only=True
     )
 
+    # --------------------------------------------------------
+    # Create EfficientNet-B0
+    # --------------------------------------------------------
+
+    model = models.efficientnet_b0(
+        weights=None
+    )
+
+    in_features = model.classifier[1].in_features
+
+    # --------------------------------------------------------
+    # Detect classifier architecture
+    # --------------------------------------------------------
+
+    if (
+        "classifier.1.1.weight" in state_dict
+        and "classifier.1.1.bias" in state_dict
+    ):
+
+        # Training architecture:
+        #
+        # classifier[1] = Sequential(
+        #     Dropout(0.30),
+        #     Linear(...)
+        # )
+        #
+        # Saved keys:
+        # classifier.1.0.weight
+        # classifier.1.0.bias
+        # classifier.1.1.weight
+        # classifier.1.1.bias
+
+        model.classifier[1] = nn.Sequential(
+            nn.Dropout(
+                p=0.30
+            ),
+            nn.Linear(
+                in_features,
+                2
+            )
+        )
+
+    elif (
+        "classifier.1.weight" in state_dict
+        and "classifier.1.bias" in state_dict
+    ):
+
+        # Alternative architecture:
+        #
+        # classifier[1] = Linear(...)
+        #
+        # Saved keys:
+        # classifier.1.weight
+        # classifier.1.bias
+
+        model.classifier[1] = nn.Linear(
+            in_features,
+            2
+        )
+
+    else:
+
+        raise RuntimeError(
+            "Unsupported EfficientNet checkpoint architecture.\n\n"
+            "Expected either:\n"
+            "classifier.1.weight / classifier.1.bias\n"
+            "or:\n"
+            "classifier.1.1.weight / classifier.1.1.bias"
+        )
+
+    # --------------------------------------------------------
+    # Load trained weights
+    # --------------------------------------------------------
+
     model.load_state_dict(
         state_dict
     )
 
+    # --------------------------------------------------------
     # Move model to device
+    # --------------------------------------------------------
+
     model = model.to(device)
 
+    # --------------------------------------------------------
     # Evaluation mode
+    # --------------------------------------------------------
+
     model.eval()
 
     return model

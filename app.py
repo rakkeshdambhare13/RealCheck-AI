@@ -1,7 +1,12 @@
+
 import streamlit as st
 from PIL import Image
 import tempfile
 import os
+
+# ==================================================
+# REALCHECK AI MODULES
+# ==================================================
 
 from src.predict_image import (
     predict_image,
@@ -31,501 +36,10 @@ from src.database import (
 
 st.set_page_config(
     page_title="RealCheck AI",
-    page_icon="◈",
-    layout="wide"
+    page_icon="🔍",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
-
-
-# ==================================================
-# FUTURISTIC BACKGROUND & UI
-# ==================================================
-
-st.markdown("""
-<style>
-
-/* ==================================================
-   MAIN FUTURISTIC BACKGROUND
-   ================================================== */
-
-.stApp {
-    background:
-        radial-gradient(
-            circle at 10% 10%,
-            rgba(0, 212, 255, 0.12),
-            transparent 28%
-        ),
-        radial-gradient(
-            circle at 90% 15%,
-            rgba(125, 80, 255, 0.14),
-            transparent 30%
-        ),
-        radial-gradient(
-            circle at 50% 90%,
-            rgba(0, 255, 190, 0.08),
-            transparent 30%
-        ),
-        linear-gradient(
-            135deg,
-            #020617 0%,
-            #06111f 45%,
-            #020617 100%
-        );
-
-    color: #eaf8ff;
-}
-
-
-/* ==================================================
-   ANIMATED DIGITAL GRID
-   ================================================== */
-
-.stApp::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-
-    pointer-events: none;
-    z-index: 0;
-
-    background-image:
-        linear-gradient(
-            rgba(0, 212, 255, 0.035) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            90deg,
-            rgba(0, 212, 255, 0.035) 1px,
-            transparent 1px
-        );
-
-    background-size: 45px 45px;
-
-    animation: rcGridMove 20s linear infinite;
-}
-
-@keyframes rcGridMove {
-
-    from {
-        background-position:
-            0 0,
-            0 0;
-    }
-
-    to {
-        background-position:
-            45px 45px,
-            45px 45px;
-    }
-}
-
-
-/* ==================================================
-   FLOATING AI GLOW
-   ================================================== */
-
-.stApp::after {
-    content: "";
-
-    position: fixed;
-
-    width: 420px;
-    height: 420px;
-
-    border-radius: 50%;
-
-    top: 18%;
-    left: 50%;
-
-    transform: translate(-50%, -50%);
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(0, 212, 255, 0.09),
-            transparent 70%
-        );
-
-    filter: blur(20px);
-
-    pointer-events: none;
-
-    z-index: 0;
-
-    animation: rcGlow 7s ease-in-out infinite;
-}
-
-@keyframes rcGlow {
-
-    0%, 100% {
-        opacity: 0.35;
-        transform:
-            translate(-50%, -50%)
-            scale(1);
-    }
-
-    50% {
-        opacity: 0.85;
-        transform:
-            translate(-50%, -50%)
-            scale(1.25);
-    }
-}
-
-
-/* ==================================================
-   CONTENT
-   ================================================== */
-
-.block-container {
-    position: relative;
-    z-index: 2;
-
-    padding-top: 2rem;
-    padding-bottom: 3rem;
-}
-
-
-/* ==================================================
-   MAIN TITLE
-   ================================================== */
-
-h1 {
-    font-weight: 900 !important;
-
-    letter-spacing: 2px !important;
-
-    background:
-        linear-gradient(
-            90deg,
-            #ffffff,
-            #00d4ff,
-            #9b7cff,
-            #00ffd0
-        );
-
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-
-    text-shadow:
-        0 0 25px rgba(0, 212, 255, 0.18);
-}
-
-
-/* ==================================================
-   HEADINGS
-   ================================================== */
-
-h2,
-h3 {
-    color: #e6faff !important;
-}
-
-
-/* ==================================================
-   PARAGRAPHS
-   ================================================== */
-
-p {
-    color: #c5dce7;
-}
-
-
-/* ==================================================
-   ANALYSIS MODE
-   ================================================== */
-
-div[role="radiogroup"] {
-
-    background:
-        rgba(4, 18, 32, 0.72);
-
-    border:
-        1px solid rgba(0, 212, 255, 0.22);
-
-    border-radius:
-        18px;
-
-    padding:
-        12px 18px;
-
-    box-shadow:
-        0 0 25px rgba(0, 212, 255, 0.07);
-
-    backdrop-filter:
-        blur(12px);
-}
-
-
-/* ==================================================
-   FILE UPLOADER
-   ================================================== */
-
-[data-testid="stFileUploader"] {
-
-    background:
-        rgba(4, 18, 32, 0.72);
-
-    border:
-        1px solid rgba(0, 212, 255, 0.25);
-
-    border-radius:
-        18px;
-
-    padding:
-        10px;
-
-    box-shadow:
-        0 0 25px rgba(0, 212, 255, 0.06);
-
-    transition:
-        all 0.3s ease;
-}
-
-[data-testid="stFileUploader"]:hover {
-
-    border-color:
-        rgba(0, 212, 255, 0.65);
-
-    box-shadow:
-        0 0 30px rgba(0, 212, 255, 0.14);
-
-    transform:
-        translateY(-2px);
-}
-
-
-/* ==================================================
-   BUTTONS
-   ================================================== */
-
-.stButton > button {
-
-    border-radius:
-        14px;
-
-    border:
-        1px solid rgba(0, 212, 255, 0.35);
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(0, 212, 255, 0.12),
-            rgba(120, 70, 255, 0.12)
-        );
-
-    color:
-        #eafaff;
-
-    font-weight:
-        800;
-
-    box-shadow:
-        0 0 18px rgba(0, 212, 255, 0.08);
-
-    transition:
-        all 0.25s ease;
-}
-
-.stButton > button:hover {
-
-    transform:
-        translateY(-3px);
-
-    border-color:
-        #00d4ff;
-
-    box-shadow:
-        0 0 25px rgba(0, 212, 255, 0.25);
-
-    color:
-        white;
-}
-
-
-/* ==================================================
-   DOWNLOAD BUTTON
-   ================================================== */
-
-.stDownloadButton > button {
-
-    border-radius:
-        14px;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(0, 212, 255, 0.15),
-            rgba(120, 70, 255, 0.15)
-        );
-
-    border:
-        1px solid rgba(0, 212, 255, 0.35);
-
-    color:
-        white;
-
-    font-weight:
-        800;
-
-    transition:
-        all 0.3s ease;
-}
-
-.stDownloadButton > button:hover {
-
-    transform:
-        translateY(-2px);
-
-    box-shadow:
-        0 0 25px rgba(0, 212, 255, 0.18);
-
-    border-color:
-        #00d4ff;
-}
-
-
-/* ==================================================
-   METRIC CARDS
-   ================================================== */
-
-[data-testid="stMetric"] {
-
-    background:
-        rgba(4, 18, 32, 0.65);
-
-    border:
-        1px solid rgba(0, 212, 255, 0.18);
-
-    border-radius:
-        16px;
-
-    padding:
-        15px;
-
-    box-shadow:
-        inset 0 0 20px rgba(0, 212, 255, 0.025);
-
-    transition:
-        all 0.3s ease;
-}
-
-[data-testid="stMetric"]:hover {
-
-    transform:
-        translateY(-3px);
-
-    border-color:
-        rgba(0, 212, 255, 0.45);
-
-    box-shadow:
-        0 0 25px rgba(0, 212, 255, 0.12);
-}
-
-
-/* ==================================================
-   IMAGES
-   ================================================== */
-
-img {
-
-    border-radius:
-        16px;
-}
-
-[data-testid="stImage"] img {
-
-    transition:
-        all 0.3s ease;
-}
-
-[data-testid="stImage"] img:hover {
-
-    transform:
-        scale(1.01);
-
-    box-shadow:
-        0 0 30px rgba(0, 212, 255, 0.16);
-}
-
-
-/* ==================================================
-   VIDEO
-   ================================================== */
-
-video {
-
-    border-radius:
-        16px;
-
-    box-shadow:
-        0 0 25px rgba(0, 212, 255, 0.08);
-}
-
-
-/* ==================================================
-   ALERT BOXES
-   ================================================== */
-
-[data-testid="stAlert"] {
-
-    border-radius:
-        15px;
-
-    border:
-        1px solid rgba(0, 212, 255, 0.16);
-}
-
-
-/* ==================================================
-   DIVIDERS
-   ================================================== */
-
-hr {
-
-    border-color:
-        rgba(0, 212, 255, 0.12) !important;
-}
-
-
-/* ==================================================
-   DATAFRAME
-   ================================================== */
-
-[data-testid="stDataFrame"] {
-
-    border-radius:
-        15px;
-
-    overflow:
-        hidden;
-}
-
-
-/* ==================================================
-   MOBILE
-   ================================================== */
-
-@media (max-width: 768px) {
-
-    .block-container {
-
-        padding-left:
-            1rem;
-
-        padding-right:
-            1rem;
-    }
-
-    h1 {
-
-        font-size:
-            2rem !important;
-    }
-
-}
-
-</style>
-""", unsafe_allow_html=True)
 
 
 # ==================================================
@@ -536,33 +50,797 @@ initialize_database()
 
 
 # ==================================================
-# TITLE
+# CUSTOM UI
 # ==================================================
 
-st.title("◈ REALCHECK AI")
+st.html(
+    """
+    <style>
 
-st.subheader(
-    "◈ Multimodal AI-Based Fake Media Detection and Prediction System"
-)
+    /* ==============================================
+       GLOBAL BACKGROUND
+       ============================================== */
 
-st.write(
-    "Upload image, video, or both to determine whether "
-    "the media is likely real or AI-generated."
+    .stApp {
+        background:
+            radial-gradient(
+                circle at 15% 15%,
+                rgba(0, 220, 255, 0.13),
+                transparent 28%
+            ),
+            radial-gradient(
+                circle at 85% 25%,
+                rgba(120, 0, 255, 0.12),
+                transparent 30%
+            ),
+            radial-gradient(
+                circle at 50% 90%,
+                rgba(0, 255, 170, 0.08),
+                transparent 28%
+            ),
+            #050816;
+
+        color: #f5f7ff;
+        overflow-x: hidden;
+    }
+
+
+    /* ==============================================
+       MOVING 3D GRID
+       ============================================== */
+
+    .stApp::before {
+        content: "";
+        position: fixed;
+        left: -20%;
+        right: -20%;
+        bottom: -20%;
+        height: 65%;
+
+        background-image:
+            linear-gradient(
+                rgba(0, 210, 255, 0.12) 1px,
+                transparent 1px
+            ),
+            linear-gradient(
+                90deg,
+                rgba(0, 210, 255, 0.12) 1px,
+                transparent 1px
+            );
+
+        background-size: 70px 70px;
+
+        transform:
+            perspective(450px)
+            rotateX(62deg)
+            translateY(0);
+
+        transform-origin: center bottom;
+
+        animation: gridMove 8s linear infinite;
+
+        pointer-events: none;
+        z-index: 0;
+
+        mask-image: linear-gradient(
+            to top,
+            rgba(0,0,0,1),
+            rgba(0,0,0,0)
+        );
+    }
+
+    @keyframes gridMove {
+        from {
+            background-position: 0 0;
+        }
+
+        to {
+            background-position: 0 70px;
+        }
+    }
+
+
+    /* ==============================================
+       FLOATING AURA
+       ============================================== */
+
+    .stApp::after {
+        content: "";
+        position: fixed;
+
+        width: 450px;
+        height: 450px;
+
+        left: 50%;
+        top: 35%;
+
+        transform: translate(-50%, -50%);
+
+        background:
+            radial-gradient(
+                circle,
+                rgba(0, 220, 255, 0.10),
+                transparent 65%
+            );
+
+        filter: blur(20px);
+
+        animation: auraMove 9s ease-in-out infinite alternate;
+
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    @keyframes auraMove {
+
+        0% {
+            transform:
+                translate(-55%, -45%)
+                scale(0.9);
+        }
+
+        50% {
+            transform:
+                translate(-35%, -55%)
+                scale(1.2);
+        }
+
+        100% {
+            transform:
+                translate(-65%, -35%)
+                scale(1);
+        }
+    }
+
+
+    /* ==============================================
+       MAIN CONTENT
+       ============================================== */
+
+    .block-container {
+        position: relative;
+        z-index: 2;
+
+        padding-top: 2rem;
+        padding-bottom: 3rem;
+
+        max-width: 1250px;
+    }
+
+
+    /* ==============================================
+       HEADER
+       ============================================== */
+
+    .rc-header {
+        text-align: center;
+        padding: 25px 10px 20px;
+    }
+
+    .rc-icon {
+        display: inline-flex;
+
+        width: 150px;
+        height: 150px;
+
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        font-size: 80px;
+
+        background:
+            radial-gradient(
+                circle at 35% 30%,
+                rgba(255,255,255,0.25),
+                rgba(0,220,255,0.10)
+            );
+
+        border: 1px solid rgba(255,255,255,0.20);
+
+        box-shadow:
+            0 0 25px rgba(0,220,255,0.35),
+            inset 0 0 30px rgba(255,255,255,0.05);
+
+        animation:
+            iconFloat 4s ease-in-out infinite,
+            iconGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes iconFloat {
+
+        0%, 100% {
+            transform:
+                translateY(0)
+                rotateY(0deg);
+        }
+
+        50% {
+            transform:
+                translateY(-12px)
+                rotateY(15deg);
+        }
+    }
+
+    @keyframes iconGlow {
+
+        from {
+            box-shadow:
+                0 0 20px rgba(0,220,255,0.25),
+                inset 0 0 20px rgba(255,255,255,0.04);
+        }
+
+        to {
+            box-shadow:
+                0 0 45px rgba(0,220,255,0.60),
+                inset 0 0 30px rgba(255,255,255,0.08);
+        }
+    }
+
+
+    .rc-title {
+
+        margin-top: 20px;
+
+        font-size: clamp(42px, 7vw, 82px);
+
+        font-weight: 900;
+
+        letter-spacing: 5px;
+
+        background:
+            linear-gradient(
+                90deg,
+                #00eaff,
+                #ffffff,
+                #9b5cff,
+                #00eaff
+            );
+
+        background-size: 300% 100%;
+
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+
+        animation: titleGradient 5s linear infinite;
+    }
+
+    @keyframes titleGradient {
+
+        0% {
+            background-position: 0% 50%;
+        }
+
+        100% {
+            background-position: 300% 50%;
+        }
+    }
+
+
+    .rc-subtitle {
+
+        margin-top: 8px;
+
+        color: #aeb8d4;
+
+        font-size: 16px;
+
+        letter-spacing: 4px;
+
+        text-transform: uppercase;
+    }
+
+    .rc-description {
+
+        max-width: 850px;
+
+        margin: 18px auto 0;
+
+        padding: 18px 24px;
+
+        border-radius: 20px;
+
+        background:
+            rgba(255,255,255,0.045);
+
+        border:
+            1px solid rgba(255,255,255,0.10);
+
+        backdrop-filter: blur(16px);
+
+        color: #cbd3ea;
+
+        line-height: 1.7;
+    }
+
+
+    /* ==============================================
+       GLASS CARDS
+       ============================================== */
+
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+
+        background:
+            rgba(255,255,255,0.035);
+
+        border:
+            1px solid rgba(255,255,255,0.09);
+
+        border-radius: 22px;
+
+        backdrop-filter: blur(18px);
+
+        box-shadow:
+            0 15px 50px rgba(0,0,0,0.20);
+
+    }
+
+
+    /* ==============================================
+       RADIO
+       ============================================== */
+
+    div[role="radiogroup"] {
+
+        background:
+            rgba(255,255,255,0.035);
+
+        padding: 10px;
+
+        border-radius: 18px;
+
+        border:
+            1px solid rgba(255,255,255,0.10);
+
+        backdrop-filter: blur(15px);
+
+    }
+
+
+    /* ==============================================
+       UPLOADER
+       ============================================== */
+
+    section[data-testid="stFileUploaderDropzone"] {
+
+        background:
+            rgba(255,255,255,0.045);
+
+        border:
+            1px dashed rgba(0,220,255,0.45);
+
+        border-radius: 20px;
+
+        transition:
+            all 0.3s ease;
+
+    }
+
+    section[data-testid="stFileUploaderDropzone"]:hover {
+
+        transform:
+            translateY(-3px);
+
+        border-color:
+            rgba(0,230,255,0.85);
+
+        box-shadow:
+            0 0 30px rgba(0,220,255,0.18);
+
+    }
+
+
+    /* ==============================================
+       BUTTONS
+       ============================================== */
+
+    .stButton > button {
+
+        border-radius: 14px;
+
+        border:
+            1px solid rgba(0,220,255,0.30);
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(0,220,255,0.15),
+                rgba(120,0,255,0.15)
+            );
+
+        color: white;
+
+        font-weight: 700;
+
+        transition:
+            all 0.25s ease;
+
+        min-height: 45px;
+    }
+
+    .stButton > button:hover {
+
+        transform:
+            translateY(-3px)
+            scale(1.01);
+
+        border-color:
+            rgba(0,230,255,0.80);
+
+        box-shadow:
+            0 10px 30px rgba(0,220,255,0.20);
+    }
+
+
+    /* ==============================================
+       METRICS
+       ============================================== */
+
+    div[data-testid="stMetric"] {
+
+        background:
+            rgba(255,255,255,0.035);
+
+        border:
+            1px solid rgba(255,255,255,0.08);
+
+        border-radius: 18px;
+
+        padding: 16px;
+
+        transition:
+            transform 0.25s ease;
+    }
+
+    div[data-testid="stMetric"]:hover {
+
+        transform:
+            translateY(-4px)
+            perspective(500px)
+            rotateX(2deg)
+            rotateY(-2deg);
+
+    }
+
+
+    /* ==============================================
+       DATAFRAME
+       ============================================== */
+
+    div[data-testid="stDataFrame"] {
+
+        border-radius: 16px;
+
+        overflow: hidden;
+
+        border:
+            1px solid rgba(255,255,255,0.08);
+    }
+
+
+    /* ==============================================
+       FOOTER
+       ============================================== */
+
+    .rc-footer {
+
+        text-align: center;
+
+        margin-top: 60px;
+
+        padding: 30px 20px;
+
+        color: #78829d;
+
+        border-top:
+            1px solid rgba(255,255,255,0.08);
+
+        font-size: 13px;
+    }
+
+    .rc-contact {
+
+        margin: 20px auto;
+
+        padding: 18px 25px;
+
+        max-width: 520px;
+
+        border-radius: 18px;
+
+        background:
+            rgba(255,255,255,0.035);
+
+        border:
+            1px solid rgba(0,220,255,0.15);
+
+        backdrop-filter: blur(14px);
+
+        box-shadow:
+            0 10px 35px rgba(0,0,0,0.15);
+
+        transition:
+            all 0.3s ease;
+    }
+
+    .rc-contact:hover {
+
+        transform:
+            translateY(-3px);
+
+        border-color:
+            rgba(0,220,255,0.45);
+
+        box-shadow:
+            0 0 30px rgba(0,220,255,0.12);
+    }
+
+    .rc-contact-title {
+
+        color: #00eaff;
+
+        font-size: 16px;
+
+        font-weight: 700;
+
+        margin-bottom: 12px;
+    }
+
+    .rc-contact-item {
+
+        margin: 8px 0;
+
+        color: #cbd3ea;
+
+        font-size: 14px;
+    }
+
+    .rc-contact-item a {
+
+        color: #cbd3ea;
+
+        text-decoration: none;
+
+        transition:
+            color 0.25s ease;
+    }
+
+    .rc-contact-item a:hover {
+
+        color: #00eaff;
+    }
+
+
+    /* ==============================================
+       MOBILE
+       ============================================== */
+
+    @media (max-width: 700px) {
+
+        .rc-title {
+            font-size: 42px;
+            letter-spacing: 2px;
+        }
+
+        .rc-subtitle {
+            font-size: 11px;
+            letter-spacing: 2px;
+        }
+
+        .rc-icon {
+            width: 85px;
+            height: 85px;
+            font-size: 42px;
+        }
+
+        .block-container {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        .rc-contact {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+    }
+
+    </style>
+
+    <div class="rc-header">
+
+        <div class="rc-icon">
+            🔍
+        </div>
+
+        <div class="rc-title">
+            REALCHECK AI
+        </div>
+
+        <div class="rc-subtitle">
+            MULTIMODAL AI CONTENT FORENSICS
+        </div>
+
+        <div class="rc-description">
+
+            Detect suspicious AI-generated and manipulated
+            media using image analysis, video frame analysis,
+            multimodal fusion, confidence estimation,
+            digital evidence, and explainable AI.
+
+            <br><br>
+
+            <b>DETECT • ANALYZE • VERIFY • EXPLAIN</b>
+
+        </div>
+
+    </div>
+    """
 )
 
 
 # ==================================================
-# MEDIA TYPE
+# HELPER FUNCTIONS
+# ==================================================
+
+def save_image_analysis_to_database(evidence, prediction, confidence):
+
+    uncertainty = max(
+        0.0,
+        100.0 - float(confidence)
+    )
+
+    save_analysis(
+        evidence_id=evidence["evidence_id"],
+        file_name=evidence["file_name"],
+        file_type=evidence["file_type"],
+        analysis_type="Image Analysis",
+        result=prediction,
+        confidence=float(confidence),
+        uncertainty=uncertainty,
+        sha256=evidence["sha256"],
+        analysis_time=evidence["analysis_time"]
+    )
+
+
+def save_video_analysis_to_database(evidence, prediction, confidence):
+
+    uncertainty = max(
+        0.0,
+        100.0 - float(confidence)
+    )
+
+    save_analysis(
+        evidence_id=evidence["evidence_id"],
+        file_name=evidence["file_name"],
+        file_type=evidence["file_type"],
+        analysis_type="Video Analysis",
+        result=prediction,
+        confidence=float(confidence),
+        uncertainty=uncertainty,
+        sha256=evidence["sha256"],
+        analysis_time=evidence["analysis_time"]
+    )
+
+
+def save_fusion_analysis_to_database(
+    evidence,
+    prediction,
+    confidence,
+    uncertainty
+):
+
+    save_analysis(
+        evidence_id=evidence["evidence_id"],
+        file_name=evidence["file_name"],
+        file_type=evidence["file_type"],
+        analysis_type="Multimodal Fusion",
+        result=prediction,
+        confidence=float(confidence),
+        uncertainty=float(uncertainty),
+        sha256=evidence["sha256"],
+        analysis_time=evidence["analysis_time"]
+    )
+
+
+def get_reliability(confidence):
+
+    confidence = float(confidence)
+
+    if confidence >= 80:
+        return "HIGH"
+
+    elif confidence >= 65:
+        return "MEDIUM"
+
+    return "LOW"
+
+
+def get_fake_score(label, confidence):
+
+    confidence = float(confidence)
+
+    if label == "FAKE":
+        return confidence
+
+    return 100.0 - confidence
+
+
+def display_evidence(evidence, title="🔐 Digital Evidence"):
+
+    st.divider()
+
+    if title:
+        st.subheader(title)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        st.write(
+            f"**Evidence ID:** "
+            f"{evidence['evidence_id']}"
+        )
+
+        st.write(
+            f"**File Name:** "
+            f"{evidence['file_name']}"
+        )
+
+        st.write(
+            f"**File Type:** "
+            f"{evidence['file_type']}"
+        )
+
+        st.write(
+            f"**File Size:** "
+            f"{evidence['file_size']}"
+        )
+
+    with col2:
+
+        st.write(
+            f"**Analysis Time:** "
+            f"{evidence['analysis_time']}"
+        )
+
+        st.write(
+            f"**Result:** "
+            f"{evidence['result']}"
+        )
+
+        st.write(
+            f"**Confidence:** "
+            f"{float(evidence['confidence']):.2f}%"
+        )
+
+    st.write("**SHA-256 File Hash:**")
+
+    st.code(
+        evidence["sha256"],
+        language="text"
+    )
+
+    st.info(
+        "The SHA-256 hash acts as a digital fingerprint "
+        "of the analyzed file. If the file changes, "
+        "its SHA-256 hash will also change."
+    )
+
+
+# ==================================================
+# ANALYSIS MODE
 # ==================================================
 
 media_type = st.radio(
-    "◈ Select Analysis Mode",
+    "Analysis Mode",
     [
-        "▣ Image",
-        "▶ Video",
-        "◇ Multimodal Fusion"
+        "🖼️ Image",
+        "🎥 Video",
+        "🔗 Multimodal Fusion"
     ],
-    horizontal=True
+    horizontal=True,
+    label_visibility="collapsed"
 )
 
 
@@ -570,85 +848,108 @@ media_type = st.radio(
 # IMAGE ANALYSIS
 # ==================================================
 
-if media_type == "▣ Image":
+if media_type == "🖼️ Image":
 
-    uploaded_file = st.file_uploader(
-        "▣ Upload Image",
+    st.markdown("## 🖼️ Image Forensics")
+
+    st.write(
+        "Upload an image to determine whether it is "
+        "likely real or AI-generated."
+    )
+
+    uploaded_image = st.file_uploader(
+        "Upload Image",
         type=[
             "jpg",
             "jpeg",
             "png"
-        ]
+        ],
+        key="image_upload"
     )
 
-    if uploaded_file is not None:
+    if uploaded_image is not None:
 
         image = Image.open(
-            uploaded_file
+            uploaded_image
         ).convert("RGB")
 
         st.image(
             image,
             caption="Uploaded Image",
-            width=500
+            width=600
         )
 
         if st.button(
-            "◈ Start Image Analysis"
+            "🔎 Start Image Analysis",
+            key="start_image_analysis"
         ):
 
-            image_path = None
+            image_temp_path = None
 
             try:
 
-                # ==========================================
-                # SAVE ORIGINAL IMAGE TEMPORARILY
-                # ==========================================
-
-                file_extension = os.path.splitext(
-                    uploaded_file.name
-                )[1]
-
-                if file_extension == "":
-                    file_extension = ".jpg"
-
                 with tempfile.NamedTemporaryFile(
                     delete=False,
-                    suffix=file_extension
-                ) as temp_file:
+                    suffix=".png"
+                ) as temp_image:
 
-                    temp_file.write(
-                        uploaded_file.getvalue()
+                    image.save(
+                        temp_image,
+                        format="PNG"
                     )
 
-                    image_path = temp_file.name
-
-
-                # ==========================================
-                # IMAGE ANALYSIS
-                # ==========================================
+                    image_temp_path = temp_image.name
 
                 with st.spinner(
                     "AI is analyzing the image..."
                 ):
 
-                    (
-                        label,
-                        confidence,
-                        prediction
-                    ) = predict_image(
+                    result = predict_image(
                         image
                     )
 
+                if isinstance(result, dict):
+
+                    prediction = result["prediction"]
+
+                    confidence = (
+                        float(result["confidence"]) * 100
+                    )
+
+                    fake_score = (
+                        float(result["fake_score"]) * 100
+                    )
+
+                    real_score = (
+                        float(result["real_score"]) * 100
+                    )
+
+                    class_id = result["class_id"]
+
+                else:
+
+                    prediction = result[0]
+
+                    confidence = float(result[1])
+
+                    class_id = result[2]
+
+                    fake_score = get_fake_score(
+                        prediction,
+                        confidence
+                    )
+
+                    real_score = (
+                        100.0 - fake_score
+                    )
 
                 st.divider()
 
+                st.subheader(
+                    "🎯 Analysis Result"
+                )
 
-                # ==========================================
-                # IMAGE RESULT
-                # ==========================================
-
-                if label == "FAKE":
+                if prediction == "FAKE":
 
                     st.error(
                         "🔴 AI-GENERATED / FAKE"
@@ -681,123 +982,54 @@ if media_type == "▣ Image":
                         "consistent with real images."
                     )
 
-
-                # ==========================================
-                # CONFIDENCE INFORMATION
-                # ==========================================
-
-                image_uncertainty = 100 - confidence
-
-                if confidence >= 80:
-
-                    image_reliability = "HIGH"
-
-                elif confidence >= 65:
-
-                    image_reliability = "MEDIUM"
-
-                else:
-
-                    image_reliability = "LOW"
-
-
-                # ==========================================
-                # DIGITAL EVIDENCE
-                # ==========================================
-
-                evidence = create_evidence_record(
-                    file_path=image_path,
-                    file_name=uploaded_file.name,
-                    result=label,
-                    confidence=confidence
-                )
-
-
-                # ==========================================
-                # SAVE IMAGE ANALYSIS TO DATABASE
-                # ==========================================
-
-                save_analysis(
-                    evidence_id=evidence["evidence_id"],
-                    file_name=evidence["file_name"],
-                    file_type=evidence["file_type"],
-                    analysis_type="Image",
-                    result=evidence["result"],
-                    confidence=evidence["confidence"],
-                    uncertainty=100 - evidence["confidence"],
-                    sha256=evidence["sha256"],
-                    analysis_time=evidence["analysis_time"]
-                )
-
-
-                st.divider()
-
                 st.subheader(
-                    "🔐 Digital Evidence"
+                    "📊 Prediction Scores"
                 )
-
 
                 col1, col2 = st.columns(2)
 
                 with col1:
 
-                    st.write(
-                        f"**Evidence ID:** "
-                        f"{evidence['evidence_id']}"
-                    )
-
-                    st.write(
-                        f"**File Name:** "
-                        f"{evidence['file_name']}"
-                    )
-
-                    st.write(
-                        f"**File Type:** "
-                        f"{evidence['file_type']}"
-                    )
-
-                    st.write(
-                        f"**File Size:** "
-                        f"{evidence['file_size']}"
+                    st.metric(
+                        "🔴 Fake Score",
+                        f"{fake_score:.2f}%"
                     )
 
                 with col2:
 
-                    st.write(
-                        f"**Analysis Time:** "
-                        f"{evidence['analysis_time']}"
+                    st.metric(
+                        "🟢 Real Score",
+                        f"{real_score:.2f}%"
                     )
 
-                    st.write(
-                        f"**Result:** "
-                        f"{evidence['result']}"
-                    )
-
-                    st.write(
-                        f"**Confidence:** "
-                        f"{evidence['confidence']:.2f}%"
-                    )
-
-
-                st.write(
-                    "**SHA-256 File Hash:**"
+                uncertainty = (
+                    100.0 - confidence
                 )
 
-                st.code(
-                    evidence["sha256"],
-                    language="text"
+                reliability = get_reliability(
+                    confidence
                 )
 
-                st.info(
-                    "The SHA-256 hash acts as a digital fingerprint "
-                    "of the analyzed file. If the file changes, "
-                    "its SHA-256 hash will also change."
+                evidence = create_evidence_record(
+                    file_path=image_temp_path,
+                    file_name=uploaded_image.name,
+                    result=prediction,
+                    confidence=confidence
                 )
 
+                display_evidence(
+                    evidence
+                )
 
-                # ==========================================
-                # PDF FORENSIC REPORT
-                # ==========================================
+                save_image_analysis_to_database(
+                    evidence=evidence,
+                    prediction=prediction,
+                    confidence=confidence
+                )
+
+                st.success(
+                    "✅ Analysis saved to history."
+                )
 
                 st.divider()
 
@@ -809,37 +1041,23 @@ if media_type == "▣ Image":
                     evidence_records=[
                         evidence
                     ],
-
-                    final_result=label,
-
+                    final_result=prediction,
                     final_confidence=confidence,
-
-                    uncertainty=image_uncertainty,
-
-                    reliability=image_reliability,
-
+                    uncertainty=uncertainty,
+                    reliability=reliability,
                     evidence_strength="MODERATE",
-
                     model_agreement="N/A"
                 )
 
                 st.download_button(
                     label="📄 Download Forensic PDF Report",
-
                     data=pdf_data,
-
                     file_name=(
                         f"RealCheck_AI_Report_"
                         f"{evidence['evidence_id']}.pdf"
                     ),
-
                     mime="application/pdf"
                 )
-
-
-                # ==========================================
-                # GRAD-CAM
-                # ==========================================
 
                 st.divider()
 
@@ -858,14 +1076,14 @@ if media_type == "▣ Image":
 
                     try:
 
-                        model = load_model()
+                        gradcam_model = load_model()
 
                         gradcam_image = create_gradcam_image(
-                            model=model,
-                            image=image,
-                            transform=transform,
-                            target_class=prediction,
-                            device=device
+                            gradcam_model,
+                            image,
+                            transform,
+                            class_id,
+                            device
                         )
 
                         st.image(
@@ -874,11 +1092,11 @@ if media_type == "▣ Image":
                                 "Grad-CAM: Important Regions "
                                 "Influencing the Prediction"
                             ),
-                            width=600
+                            width=650
                         )
 
                         st.info(
-                            "Note: Grad-CAM shows regions that "
+                            "Grad-CAM shows regions that "
                             "influenced the model's decision. "
                             "It does not prove that a highlighted "
                             "region is fake."
@@ -890,7 +1108,6 @@ if media_type == "▣ Image":
                             f"Grad-CAM generation failed: {e}"
                         )
 
-
             except Exception as e:
 
                 st.error(
@@ -899,31 +1116,39 @@ if media_type == "▣ Image":
 
             finally:
 
-                # ==========================================
-                # DELETE TEMP IMAGE
-                # ==========================================
-
                 if (
-                    image_path is not None
-                    and os.path.exists(image_path)
+                    image_temp_path is not None
+                    and os.path.exists(image_temp_path)
                 ):
 
-                    os.remove(image_path)
+                    try:
+                        os.remove(image_temp_path)
+
+                    except Exception:
+                        pass
 
 
 # ==================================================
 # VIDEO ANALYSIS
 # ==================================================
 
-elif media_type == "▶ Video":
+elif media_type == "🎥 Video":
+
+    st.markdown("## 🎥 Video Forensics")
+
+    st.write(
+        "Upload a video and RealCheck AI will analyze "
+        "sampled frames for suspicious AI-generated patterns."
+    )
 
     uploaded_video = st.file_uploader(
-        "▶ Upload Video",
+        "Upload Video",
         type=[
             "mp4",
             "avi",
             "mov"
-        ]
+        ],
+        key="video_upload"
     )
 
     if uploaded_video is not None:
@@ -933,16 +1158,13 @@ elif media_type == "▶ Video":
         )
 
         if st.button(
-            "▶ Start Video Analysis"
+            "🔎 Start Video Analysis",
+            key="start_video_analysis"
         ):
 
             video_path = None
 
             try:
-
-                # ==========================================
-                # SAVE TEMPORARY VIDEO
-                # ==========================================
 
                 file_extension = os.path.splitext(
                     uploaded_video.name
@@ -962,11 +1184,6 @@ elif media_type == "▶ Video":
 
                     video_path = temp_file.name
 
-
-                # ==========================================
-                # VIDEO ANALYSIS
-                # ==========================================
-
                 with st.spinner(
                     "AI is analyzing video frames..."
                 ):
@@ -976,13 +1193,11 @@ elif media_type == "▶ Video":
                         frame_interval=15
                     )
 
-
                 st.divider()
 
-
-                # ==========================================
-                # VIDEO RESULT
-                # ==========================================
+                st.subheader(
+                    "🎯 Video Analysis Result"
+                )
 
                 if result["result"] == "FAKE":
 
@@ -1001,10 +1216,9 @@ elif media_type == "▶ Video":
                     f'{result["confidence"]:.2f}%'
                 )
 
-
-                # ==========================================
-                # FRAME INFORMATION
-                # ==========================================
+                st.subheader(
+                    "🎞️ Frame Analysis"
+                )
 
                 col1, col2, col3 = st.columns(3)
 
@@ -1029,16 +1243,10 @@ elif media_type == "▶ Video":
                         result["real_frames"]
                     )
 
-
                 st.write(
                     f'**Fake Frame Ratio:** '
                     f'{result["fake_ratio"]:.2f}%'
                 )
-
-
-                # ==========================================
-                # DIGITAL EVIDENCE
-                # ==========================================
 
                 video_evidence = create_evidence_record(
                     file_path=video_path,
@@ -1047,108 +1255,38 @@ elif media_type == "▶ Video":
                     confidence=result["confidence"]
                 )
 
-
-                # ==========================================
-                # SAVE VIDEO ANALYSIS TO DATABASE
-                # ==========================================
-
-                save_analysis(
-                    evidence_id=video_evidence["evidence_id"],
-                    file_name=video_evidence["file_name"],
-                    file_type=video_evidence["file_type"],
-                    analysis_type="Video",
-                    result=video_evidence["result"],
-                    confidence=video_evidence["confidence"],
-                    uncertainty=100 - video_evidence["confidence"],
-                    sha256=video_evidence["sha256"],
-                    analysis_time=video_evidence["analysis_time"]
+                display_evidence(
+                    video_evidence
                 )
 
-
-                st.divider()
-
-                st.subheader(
-                    "🔐 Digital Evidence"
+                save_video_analysis_to_database(
+                    evidence=video_evidence,
+                    prediction=result["result"],
+                    confidence=result["confidence"]
                 )
 
-
-                col1, col2 = st.columns(2)
-
-                with col1:
-
-                    st.write(
-                        f"**Evidence ID:** "
-                        f"{video_evidence['evidence_id']}"
-                    )
-
-                    st.write(
-                        f"**File Name:** "
-                        f"{video_evidence['file_name']}"
-                    )
-
-                    st.write(
-                        f"**File Type:** "
-                        f"{video_evidence['file_type']}"
-                    )
-
-                    st.write(
-                        f"**File Size:** "
-                        f"{video_evidence['file_size']}"
-                    )
-
-                with col2:
-
-                    st.write(
-                        f"**Analysis Time:** "
-                        f"{video_evidence['analysis_time']}"
-                    )
-
-                    st.write(
-                        f"**Result:** "
-                        f"{video_evidence['result']}"
-                    )
-
-                    st.write(
-                        f"**Confidence:** "
-                        f"{video_evidence['confidence']:.2f}%"
-                    )
-
-
-                st.write(
-                    "**SHA-256 File Hash:**"
+                st.success(
+                    "✅ Video analysis saved to history."
                 )
 
-                st.code(
-                    video_evidence["sha256"],
-                    language="text"
+                video_confidence = float(
+                    result["confidence"]
                 )
-
-                st.info(
-                    "The SHA-256 hash acts as a digital fingerprint "
-                    "of the analyzed video."
-                )
-
-
-                # ==========================================
-                # PDF FORENSIC REPORT
-                # ==========================================
 
                 video_uncertainty = (
-                    100 - result["confidence"]
+                    100.0 - video_confidence
                 )
 
-                if result["confidence"] >= 80:
+                video_reliability = get_reliability(
+                    video_confidence
+                )
 
-                    video_reliability = "HIGH"
-
-                elif result["confidence"] >= 65:
-
-                    video_reliability = "MEDIUM"
-
-                else:
-
-                    video_reliability = "LOW"
-
+                video_fake_score = (
+                    video_confidence
+                    if result["result"] == "FAKE"
+                    else
+                    100.0 - video_confidence
+                )
 
                 st.divider()
 
@@ -1156,54 +1294,31 @@ elif media_type == "▶ Video":
                     "📄 Forensic Report"
                 )
 
-
-                video_fake_score = (
-                    result["confidence"]
-                    if result["result"] == "FAKE"
-                    else 100 - result["confidence"]
-                )
-
-
                 video_pdf = create_pdf_report(
                     evidence_records=[
                         video_evidence
                     ],
-
                     final_result=result["result"],
-
-                    final_confidence=result["confidence"],
-
+                    final_confidence=video_confidence,
                     uncertainty=video_uncertainty,
-
                     reliability=video_reliability,
-
                     evidence_strength="MODERATE",
-
                     model_agreement="N/A",
-
                     video_fake_score=video_fake_score,
-
                     video_result=result
                 )
 
-
                 st.download_button(
-                    label="📄 Download Forensic PDF Report",
-
+                    label="📄 Download Video Forensic PDF Report",
                     data=video_pdf,
-
                     file_name=(
                         f"RealCheck_AI_Video_Report_"
                         f"{video_evidence['evidence_id']}.pdf"
                     ),
-
                     mime="application/pdf"
                 )
 
-
-                # ==========================================
-                # SUSPICIOUS FRAMES
-                # ==========================================
+                st.divider()
 
                 st.subheader(
                     "⚠️ Suspicious Frames"
@@ -1233,7 +1348,6 @@ elif media_type == "▶ Video":
                         "frames detected."
                     )
 
-
             except Exception as e:
 
                 st.error(
@@ -1242,16 +1356,16 @@ elif media_type == "▶ Video":
 
             finally:
 
-                # ==========================================
-                # DELETE TEMP VIDEO
-                # ==========================================
-
                 if (
                     video_path is not None
                     and os.path.exists(video_path)
                 ):
 
-                    os.remove(video_path)
+                    try:
+                        os.remove(video_path)
+
+                    except Exception:
+                        pass
 
 
 # ==================================================
@@ -1260,23 +1374,18 @@ elif media_type == "▶ Video":
 
 else:
 
-    st.subheader(
-        "◇ Multimodal Image + Video Analysis"
+    st.markdown(
+        "## 🔗 Multimodal Image + Video Analysis"
     )
 
     st.write(
         "Upload both an image and a video. "
-        "RealCheck AI will analyze both modalities "
-        "and combine their results into a final prediction."
+        "RealCheck AI analyzes both modalities and "
+        "combines their evidence into a final prediction."
     )
 
-
-    # ==========================================
-    # UPLOAD IMAGE
-    # ==========================================
-
     fusion_image_file = st.file_uploader(
-        "▣ Upload Image",
+        "🖼️ Upload Image",
         type=[
             "jpg",
             "jpeg",
@@ -1285,13 +1394,8 @@ else:
         key="fusion_image"
     )
 
-
-    # ==========================================
-    # UPLOAD VIDEO
-    # ==========================================
-
     fusion_video_file = st.file_uploader(
-        "▶ Upload Video",
+        "🎥 Upload Video",
         type=[
             "mp4",
             "avi",
@@ -1299,11 +1403,6 @@ else:
         ],
         key="fusion_video"
     )
-
-
-    # ==========================================
-    # SHOW UPLOADED MEDIA
-    # ==========================================
 
     fusion_image = None
 
@@ -1316,9 +1415,8 @@ else:
         st.image(
             fusion_image,
             caption="Fusion Image",
-            width=450
+            width=500
         )
-
 
     if fusion_video_file is not None:
 
@@ -1326,28 +1424,20 @@ else:
             fusion_video_file
         )
 
-
-    # ==========================================
-    # START FUSION ANALYSIS
-    # ==========================================
-
     if (
         fusion_image_file is not None
         and fusion_video_file is not None
     ):
 
         if st.button(
-            "◇ Start Multimodal Analysis"
+            "🚀 Start Multimodal Analysis",
+            key="start_fusion_analysis"
         ):
 
             image_path = None
             video_path = None
 
             try:
-
-                # ==========================================
-                # SAVE ORIGINAL IMAGE
-                # ==========================================
 
                 image_extension = os.path.splitext(
                     fusion_image_file.name
@@ -1367,49 +1457,55 @@ else:
 
                     image_path = temp_file.name
 
-
-                # ==========================================
-                # IMAGE ANALYSIS
-                # ==========================================
-
                 with st.spinner(
                     "Analyzing image..."
                 ):
 
-                    (
-                        image_label,
-                        image_confidence,
-                        image_prediction
-                    ) = predict_image(
+                    image_result = predict_image(
                         fusion_image
                     )
 
+                if isinstance(image_result, dict):
 
-                if image_label == "FAKE":
+                    image_label = image_result[
+                        "prediction"
+                    ]
 
-                    image_fake_score = image_confidence
+                    image_confidence = (
+                        float(
+                            image_result["confidence"]
+                        ) * 100
+                    )
+
+                    image_prediction = image_result[
+                        "class_id"
+                    ]
 
                 else:
 
-                    image_fake_score = (
-                        100 - image_confidence
+                    image_label = image_result[0]
+
+                    image_confidence = float(
+                        image_result[1]
                     )
 
+                    image_prediction = image_result[2]
 
-                # ==========================================
-                # SAVE VIDEO
-                # ==========================================
+                image_fake_score = get_fake_score(
+                    image_label,
+                    image_confidence
+                )
 
-                file_extension = os.path.splitext(
+                video_extension = os.path.splitext(
                     fusion_video_file.name
                 )[1]
 
-                if file_extension == "":
-                    file_extension = ".mp4"
+                if video_extension == "":
+                    video_extension = ".mp4"
 
                 with tempfile.NamedTemporaryFile(
                     delete=False,
-                    suffix=file_extension
+                    suffix=video_extension
                 ) as temp_file:
 
                     temp_file.write(
@@ -1417,11 +1513,6 @@ else:
                     )
 
                     video_path = temp_file.name
-
-
-                # ==========================================
-                # VIDEO ANALYSIS
-                # ==========================================
 
                 with st.spinner(
                     "Analyzing video frames..."
@@ -1432,23 +1523,23 @@ else:
                         frame_interval=15
                     )
 
-
                 if video_result["result"] == "FAKE":
 
                     video_fake_score = (
-                        video_result["confidence"]
+                        float(
+                            video_result["confidence"]
+                        )
                     )
 
                 else:
 
                     video_fake_score = (
-                        100 - video_result["confidence"]
+                        100.0
+                        -
+                        float(
+                            video_result["confidence"]
+                        )
                     )
-
-
-                # ==========================================
-                # MULTIMODAL FUSION
-                # ==========================================
 
                 with st.spinner(
                     "Combining image and video evidence..."
@@ -1459,21 +1550,11 @@ else:
                         video_fake_score=video_fake_score
                     )
 
-
-                # ==========================================
-                # CONFIDENCE ENGINE
-                # ==========================================
-
                 confidence_result = calculate_confidence(
                     fake_score=fusion_result["fake_score"],
                     image_fake_score=image_fake_score,
                     video_fake_score=video_fake_score
                 )
-
-
-                # ==========================================
-                # FINAL RESULT DATA
-                # ==========================================
 
                 final_result = confidence_result[
                     "result"
@@ -1499,42 +1580,27 @@ else:
                     "model_agreement"
                 ]
 
-
                 st.divider()
-
-
-                # ==========================================
-                # MULTIMODAL FUSION RESULT
-                # ==========================================
 
                 st.subheader(
                     "🧠 Multimodal Fusion Result"
                 )
-
 
                 col1, col2 = st.columns(2)
 
                 with col1:
 
                     st.metric(
-                        "▣ Image Fake Score",
+                        "🖼️ Image Fake Score",
                         f"{image_fake_score:.2f}%"
                     )
 
                 with col2:
 
                     st.metric(
-                        "▶ Video Fake Score",
+                        "🎥 Video Fake Score",
                         f"{video_fake_score:.2f}%"
                     )
-
-
-                st.divider()
-
-
-                # ==========================================
-                # FINAL RESULT
-                # ==========================================
 
                 if final_result == "FAKE":
 
@@ -1570,17 +1636,11 @@ else:
                         "with real content."
                     )
 
-
-                # ==========================================
-                # CONFIDENCE & RELIABILITY
-                # ==========================================
-
                 st.divider()
 
                 st.subheader(
                     "📊 Confidence & Reliability Analysis"
                 )
-
 
                 col1, col2, col3, col4 = st.columns(4)
 
@@ -1612,11 +1672,6 @@ else:
                         evidence_strength
                     )
 
-
-                # ==========================================
-                # MODEL AGREEMENT
-                # ==========================================
-
                 if model_agreement == "AGREE":
 
                     st.success(
@@ -1631,11 +1686,6 @@ else:
                         "The prediction should be interpreted "
                         "cautiously."
                     )
-
-
-                # ==========================================
-                # UNCERTAINTY
-                # ==========================================
 
                 st.write(
                     f"**Uncertainty Level:** "
@@ -1652,21 +1702,11 @@ else:
                     )
                 )
 
-
-                # ==========================================
-                # DISCLAIMER
-                # ==========================================
-
                 st.info(
                     "⚠️ RealCheck AI provides an AI-assisted "
                     "assessment. The result should not be treated "
                     "as absolute proof of authenticity or manipulation."
                 )
-
-
-                # ==========================================
-                # FUSION DETAILS
-                # ==========================================
 
                 st.subheader(
                     "📊 Fusion Analysis"
@@ -1680,13 +1720,8 @@ else:
                     "Video contribution: **60%**"
                 )
 
-
-                # ==========================================
-                # VIDEO EVIDENCE
-                # ==========================================
-
                 st.subheader(
-                    "▶ Video Evidence"
+                    "🎥 Video Evidence"
                 )
 
                 col1, col2, col3 = st.columns(3)
@@ -1718,16 +1753,10 @@ else:
                         ]
                     )
 
-
                 st.write(
                     f'**Fake Frame Ratio:** '
                     f'{video_result["fake_ratio"]:.2f}%'
                 )
-
-
-                # ==========================================
-                # SUSPICIOUS FRAMES
-                # ==========================================
 
                 st.subheader(
                     "⚠️ Suspicious Video Frames"
@@ -1757,18 +1786,12 @@ else:
                         "video frames detected."
                     )
 
-
-                # ==========================================
-                # DIGITAL EVIDENCE
-                # ==========================================
-
                 image_evidence = create_evidence_record(
                     file_path=image_path,
                     file_name=fusion_image_file.name,
                     result=image_label,
                     confidence=image_confidence
                 )
-
 
                 video_evidence = create_evidence_record(
                     file_path=video_path,
@@ -1777,173 +1800,67 @@ else:
                     confidence=final_confidence
                 )
 
-
-                # ==========================================
-                # SAVE MULTIMODAL ANALYSIS TO DATABASE
-                # ==========================================
-
-                save_analysis(
-                    evidence_id=image_evidence["evidence_id"],
-                    file_name=image_evidence["file_name"],
-                    file_type=image_evidence["file_type"],
-                    analysis_type="Multimodal - Image",
-                    result=image_evidence["result"],
-                    confidence=image_evidence["confidence"],
-                    uncertainty=100 - image_evidence["confidence"],
-                    sha256=image_evidence["sha256"],
-                    analysis_time=image_evidence["analysis_time"]
-                )
-
-                save_analysis(
-                    evidence_id=video_evidence["evidence_id"],
-                    file_name=video_evidence["file_name"],
-                    file_type=video_evidence["file_type"],
-                    analysis_type="Multimodal - Video",
-                    result=final_result,
-                    confidence=final_confidence,
-                    uncertainty=uncertainty,
-                    sha256=video_evidence["sha256"],
-                    analysis_time=video_evidence["analysis_time"]
-                )
-
-
                 st.divider()
 
                 st.subheader(
                     "🔐 Digital Evidence"
                 )
 
+                st.markdown(
+                    "### 🖼️ Image Evidence"
+                )
 
-                # ==========================================
-                # IMAGE EVIDENCE
-                # ==========================================
+                display_evidence(
+                    image_evidence,
+                    title=""
+                )
 
                 st.markdown(
-                    "### ▣ Image Evidence"
+                    "### 🎥 Video Evidence"
                 )
 
-                col1, col2 = st.columns(2)
-
-                with col1:
-
-                    st.write(
-                        f"**Evidence ID:** "
-                        f"{image_evidence['evidence_id']}"
-                    )
-
-                    st.write(
-                        f"**File Name:** "
-                        f"{image_evidence['file_name']}"
-                    )
-
-                    st.write(
-                        f"**File Type:** "
-                        f"{image_evidence['file_type']}"
-                    )
-
-                    st.write(
-                        f"**File Size:** "
-                        f"{image_evidence['file_size']}"
-                    )
-
-                with col2:
-
-                    st.write(
-                        f"**Result:** "
-                        f"{image_evidence['result']}"
-                    )
-
-                    st.write(
-                        f"**Confidence:** "
-                        f"{image_evidence['confidence']:.2f}%"
-                    )
-
-                    st.write(
-                        f"**Analysis Time:** "
-                        f"{image_evidence['analysis_time']}"
-                    )
-
-
-                st.write(
-                    "**Image SHA-256 Hash:**"
+                display_evidence(
+                    video_evidence,
+                    title=""
                 )
 
-                st.code(
-                    image_evidence["sha256"],
-                    language="text"
+                save_analysis(
+                    evidence_id=image_evidence[
+                        "evidence_id"
+                    ],
+                    file_name=image_evidence[
+                        "file_name"
+                    ],
+                    file_type=image_evidence[
+                        "file_type"
+                    ],
+                    analysis_type="Multimodal Image",
+                    result=image_label,
+                    confidence=float(
+                        image_confidence
+                    ),
+                    uncertainty=(
+                        100.0 -
+                        float(image_confidence)
+                    ),
+                    sha256=image_evidence[
+                        "sha256"
+                    ],
+                    analysis_time=image_evidence[
+                        "analysis_time"
+                    ]
                 )
 
-
-                # ==========================================
-                # VIDEO EVIDENCE
-                # ==========================================
-
-                st.markdown(
-                    "### ▶ Video Evidence Record"
+                save_fusion_analysis_to_database(
+                    evidence=video_evidence,
+                    prediction=final_result,
+                    confidence=final_confidence,
+                    uncertainty=uncertainty
                 )
 
-                col1, col2 = st.columns(2)
-
-                with col1:
-
-                    st.write(
-                        f"**Evidence ID:** "
-                        f"{video_evidence['evidence_id']}"
-                    )
-
-                    st.write(
-                        f"**File Name:** "
-                        f"{video_evidence['file_name']}"
-                    )
-
-                    st.write(
-                        f"**File Type:** "
-                        f"{video_evidence['file_type']}"
-                    )
-
-                    st.write(
-                        f"**File Size:** "
-                        f"{video_evidence['file_size']}"
-                    )
-
-                with col2:
-
-                    st.write(
-                        f"**Result:** "
-                        f"{video_evidence['result']}"
-                    )
-
-                    st.write(
-                        f"**Confidence:** "
-                        f"{video_evidence['confidence']:.2f}%"
-                    )
-
-                    st.write(
-                        f"**Analysis Time:** "
-                        f"{video_evidence['analysis_time']}"
-                    )
-
-
-                st.write(
-                    "**Video SHA-256 Hash:**"
+                st.success(
+                    "✅ Multimodal analysis saved to history."
                 )
-
-                st.code(
-                    video_evidence["sha256"],
-                    language="text"
-                )
-
-
-                st.info(
-                    "SHA-256 hashes provide unique digital "
-                    "fingerprints for the original analyzed "
-                    "image and video files."
-                )
-
-
-                # ==========================================
-                # MULTIMODAL PDF REPORT
-                # ==========================================
 
                 st.divider()
 
@@ -1951,55 +1868,34 @@ else:
                     "📄 Forensic Report"
                 )
 
-
                 multimodal_pdf = create_pdf_report(
-
                     evidence_records=[
                         image_evidence,
                         video_evidence
                     ],
-
                     final_result=final_result,
-
                     final_confidence=final_confidence,
-
                     uncertainty=uncertainty,
-
                     reliability=reliability,
-
                     evidence_strength=evidence_strength,
-
                     model_agreement=model_agreement,
-
                     image_fake_score=image_fake_score,
-
                     video_fake_score=video_fake_score,
-
                     video_result=video_result
                 )
 
-
                 st.download_button(
-
                     label=(
                         "📄 Download Multimodal "
                         "Forensic PDF Report"
                     ),
-
                     data=multimodal_pdf,
-
                     file_name=(
                         f"RealCheck_AI_Multimodal_Report_"
                         f"{image_evidence['evidence_id']}.pdf"
                     ),
-
                     mime="application/pdf"
                 )
-
-
-                # ==========================================
-                # GRAD-CAM
-                # ==========================================
 
                 st.divider()
 
@@ -2013,14 +1909,14 @@ else:
 
                     try:
 
-                        model = load_model()
+                        gradcam_model = load_model()
 
                         gradcam_image = create_gradcam_image(
-                            model=model,
-                            image=fusion_image,
-                            transform=transform,
-                            target_class=image_prediction,
-                            device=device
+                            gradcam_model,
+                            fusion_image,
+                            transform,
+                            image_prediction,
+                            device
                         )
 
                         st.image(
@@ -2029,7 +1925,7 @@ else:
                                 "Grad-CAM: Important Regions "
                                 "Influencing Image Prediction"
                             ),
-                            width=600
+                            width=650
                         )
 
                         st.info(
@@ -2045,7 +1941,6 @@ else:
                             f"Grad-CAM generation failed: {e}"
                         )
 
-
             except Exception as e:
 
                 st.error(
@@ -2054,29 +1949,27 @@ else:
 
             finally:
 
-                # ==========================================
-                # DELETE TEMP IMAGE
-                # ==========================================
-
                 if (
                     image_path is not None
                     and os.path.exists(image_path)
                 ):
 
-                    os.remove(image_path)
+                    try:
+                        os.remove(image_path)
 
-
-                # ==========================================
-                # DELETE TEMP VIDEO
-                # ==========================================
+                    except Exception:
+                        pass
 
                 if (
                     video_path is not None
                     and os.path.exists(video_path)
                 ):
 
-                    os.remove(video_path)
+                    try:
+                        os.remove(video_path)
 
+                    except Exception:
+                        pass
 
     elif (
         fusion_image_file is not None
@@ -2102,7 +1995,9 @@ else:
 
 st.divider()
 
-st.header("📚 Analysis History")
+st.markdown(
+    "## 📚 Analysis History"
+)
 
 history = get_analysis_history()
 
@@ -2112,35 +2007,24 @@ if history:
 
     for row in history:
 
-        history_data.append({
-
-            "ID": row["id"],
-
-            "Evidence ID":
-                row["evidence_id"],
-
-            "File Name":
-                row["file_name"],
-
-            "File Type":
-                row["file_type"],
-
-            "Analysis Type":
-                row["analysis_type"],
-
-            "Result":
-                row["result"],
-
-            "Confidence":
-                f'{row["confidence"]:.2f}%',
-
-            "Uncertainty":
-                f'{row["uncertainty"]:.2f}%',
-
-            "Analysis Time":
-                row["analysis_time"]
-        })
-
+        history_data.append(
+            {
+                "ID": row["id"],
+                "Evidence ID": row["evidence_id"],
+                "File Name": row["file_name"],
+                "File Type": row["file_type"],
+                "Analysis Type": row["analysis_type"],
+                "Result": row["result"],
+                "Confidence": (
+                    f'{float(row["confidence"]):.2f}%'
+                ),
+                "Uncertainty": (
+                    f'{float(row["uncertainty"]):.2f}%'
+                ),
+                "SHA-256": row["sha256"],
+                "Analysis Time": row["analysis_time"]
+            }
+        )
 
     st.dataframe(
         history_data,
@@ -2148,9 +2032,13 @@ if history:
         hide_index=True
     )
 
+    st.caption(
+        f"Total analyses recorded: {len(history)}"
+    )
 
     if st.button(
-        "🗑️ Clear Analysis History"
+        "🗑️ Clear Analysis History",
+        key="clear_history"
     ):
 
         clear_analysis_history()
@@ -2166,3 +2054,65 @@ else:
     st.info(
         "No analysis history available yet."
     )
+
+
+# ==================================================
+# FOOTER + CONTACT
+# ==================================================
+
+st.html(
+    """
+    <div class="rc-footer">
+
+        <b style="
+            color:#00eaff;
+            font-size:18px;
+        ">
+            REALCHECK AI
+        </b>
+
+        <br><br>
+
+        Multimodal AI Content Forensics System
+
+        <br>
+
+        Detect • Analyze • Verify • Explain
+
+        <br><br>
+
+        <div class="rc-contact">
+
+            <div class="rc-contact-title">
+                📞 Contact
+            </div>
+
+            <div class="rc-contact-item">
+                📱
+                <a href="tel:7498153139">
+                    <b>7498153139</b>
+                </a>
+            </div>
+
+            <div class="rc-contact-item">
+                📧
+                <a href="mailto:rakkeshdambhare13@gmail.com">
+                    <b>rakkeshdambhare13@gmail.com</b>
+                </a>
+            </div>
+
+        </div>
+
+        AI-assisted media authenticity assessment.
+
+        <br>
+
+        Results should not be treated as absolute proof.
+
+        <br><br>
+
+        © 2026 RealCheck AI. All Rights Reserved.
+
+    </div>
+    """
+)

@@ -1,3 +1,4 @@
+
 import cv2
 import torch
 import torch.nn as nn
@@ -7,6 +8,7 @@ from pathlib import Path
 
 
 MODEL_PATH = Path("models/realcheck_image_model.pth")
+
 
 device = torch.device(
     "cuda" if torch.cuda.is_available() else "cpu"
@@ -19,9 +21,19 @@ def load_model():
         weights=None
     )
 
-    model.classifier[1] = nn.Linear(
-        model.classifier[1].in_features,
-        2
+    # IMPORTANT:
+    # Match the classifier architecture used during training.
+    # Training used:
+    # classifier[1] = Sequential(
+    #     Dropout(0.30),
+    #     Linear(..., 2)
+    # )
+
+    in_features = model.classifier[1].in_features
+
+    model.classifier[1] = nn.Sequential(
+        nn.Dropout(p=0.30),
+        nn.Linear(in_features, 2)
     )
 
     model.load_state_dict(

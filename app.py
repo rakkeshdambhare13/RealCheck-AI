@@ -16,12 +16,516 @@ from src.fusion import multimodal_fusion
 from src.confidence import calculate_confidence
 from src.evidence import create_evidence_record
 from src.report import create_pdf_report
+
 from src.database import (
     initialize_database,
     save_analysis,
     get_analysis_history,
     clear_analysis_history
 )
+
+
+# ==================================================
+# PAGE CONFIG
+# ==================================================
+
+st.set_page_config(
+    page_title="RealCheck AI",
+    page_icon="◈",
+    layout="wide"
+)
+
+
+# ==================================================
+# FUTURISTIC BACKGROUND & UI
+# ==================================================
+
+st.markdown("""
+<style>
+
+/* ==================================================
+   MAIN FUTURISTIC BACKGROUND
+   ================================================== */
+
+.stApp {
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(0, 212, 255, 0.12),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 90% 15%,
+            rgba(125, 80, 255, 0.14),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 50% 90%,
+            rgba(0, 255, 190, 0.08),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #020617 0%,
+            #06111f 45%,
+            #020617 100%
+        );
+
+    color: #eaf8ff;
+}
+
+
+/* ==================================================
+   ANIMATED DIGITAL GRID
+   ================================================== */
+
+.stApp::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    pointer-events: none;
+    z-index: 0;
+
+    background-image:
+        linear-gradient(
+            rgba(0, 212, 255, 0.035) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(0, 212, 255, 0.035) 1px,
+            transparent 1px
+        );
+
+    background-size: 45px 45px;
+
+    animation: rcGridMove 20s linear infinite;
+}
+
+@keyframes rcGridMove {
+
+    from {
+        background-position:
+            0 0,
+            0 0;
+    }
+
+    to {
+        background-position:
+            45px 45px,
+            45px 45px;
+    }
+}
+
+
+/* ==================================================
+   FLOATING AI GLOW
+   ================================================== */
+
+.stApp::after {
+    content: "";
+
+    position: fixed;
+
+    width: 420px;
+    height: 420px;
+
+    border-radius: 50%;
+
+    top: 18%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(0, 212, 255, 0.09),
+            transparent 70%
+        );
+
+    filter: blur(20px);
+
+    pointer-events: none;
+
+    z-index: 0;
+
+    animation: rcGlow 7s ease-in-out infinite;
+}
+
+@keyframes rcGlow {
+
+    0%, 100% {
+        opacity: 0.35;
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
+
+    50% {
+        opacity: 0.85;
+        transform:
+            translate(-50%, -50%)
+            scale(1.25);
+    }
+}
+
+
+/* ==================================================
+   CONTENT
+   ================================================== */
+
+.block-container {
+    position: relative;
+    z-index: 2;
+
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+
+/* ==================================================
+   MAIN TITLE
+   ================================================== */
+
+h1 {
+    font-weight: 900 !important;
+
+    letter-spacing: 2px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ffffff,
+            #00d4ff,
+            #9b7cff,
+            #00ffd0
+        );
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    text-shadow:
+        0 0 25px rgba(0, 212, 255, 0.18);
+}
+
+
+/* ==================================================
+   HEADINGS
+   ================================================== */
+
+h2,
+h3 {
+    color: #e6faff !important;
+}
+
+
+/* ==================================================
+   PARAGRAPHS
+   ================================================== */
+
+p {
+    color: #c5dce7;
+}
+
+
+/* ==================================================
+   ANALYSIS MODE
+   ================================================== */
+
+div[role="radiogroup"] {
+
+    background:
+        rgba(4, 18, 32, 0.72);
+
+    border:
+        1px solid rgba(0, 212, 255, 0.22);
+
+    border-radius:
+        18px;
+
+    padding:
+        12px 18px;
+
+    box-shadow:
+        0 0 25px rgba(0, 212, 255, 0.07);
+
+    backdrop-filter:
+        blur(12px);
+}
+
+
+/* ==================================================
+   FILE UPLOADER
+   ================================================== */
+
+[data-testid="stFileUploader"] {
+
+    background:
+        rgba(4, 18, 32, 0.72);
+
+    border:
+        1px solid rgba(0, 212, 255, 0.25);
+
+    border-radius:
+        18px;
+
+    padding:
+        10px;
+
+    box-shadow:
+        0 0 25px rgba(0, 212, 255, 0.06);
+
+    transition:
+        all 0.3s ease;
+}
+
+[data-testid="stFileUploader"]:hover {
+
+    border-color:
+        rgba(0, 212, 255, 0.65);
+
+    box-shadow:
+        0 0 30px rgba(0, 212, 255, 0.14);
+
+    transform:
+        translateY(-2px);
+}
+
+
+/* ==================================================
+   BUTTONS
+   ================================================== */
+
+.stButton > button {
+
+    border-radius:
+        14px;
+
+    border:
+        1px solid rgba(0, 212, 255, 0.35);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0, 212, 255, 0.12),
+            rgba(120, 70, 255, 0.12)
+        );
+
+    color:
+        #eafaff;
+
+    font-weight:
+        800;
+
+    box-shadow:
+        0 0 18px rgba(0, 212, 255, 0.08);
+
+    transition:
+        all 0.25s ease;
+}
+
+.stButton > button:hover {
+
+    transform:
+        translateY(-3px);
+
+    border-color:
+        #00d4ff;
+
+    box-shadow:
+        0 0 25px rgba(0, 212, 255, 0.25);
+
+    color:
+        white;
+}
+
+
+/* ==================================================
+   DOWNLOAD BUTTON
+   ================================================== */
+
+.stDownloadButton > button {
+
+    border-radius:
+        14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0, 212, 255, 0.15),
+            rgba(120, 70, 255, 0.15)
+        );
+
+    border:
+        1px solid rgba(0, 212, 255, 0.35);
+
+    color:
+        white;
+
+    font-weight:
+        800;
+
+    transition:
+        all 0.3s ease;
+}
+
+.stDownloadButton > button:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 0 25px rgba(0, 212, 255, 0.18);
+
+    border-color:
+        #00d4ff;
+}
+
+
+/* ==================================================
+   METRIC CARDS
+   ================================================== */
+
+[data-testid="stMetric"] {
+
+    background:
+        rgba(4, 18, 32, 0.65);
+
+    border:
+        1px solid rgba(0, 212, 255, 0.18);
+
+    border-radius:
+        16px;
+
+    padding:
+        15px;
+
+    box-shadow:
+        inset 0 0 20px rgba(0, 212, 255, 0.025);
+
+    transition:
+        all 0.3s ease;
+}
+
+[data-testid="stMetric"]:hover {
+
+    transform:
+        translateY(-3px);
+
+    border-color:
+        rgba(0, 212, 255, 0.45);
+
+    box-shadow:
+        0 0 25px rgba(0, 212, 255, 0.12);
+}
+
+
+/* ==================================================
+   IMAGES
+   ================================================== */
+
+img {
+
+    border-radius:
+        16px;
+}
+
+[data-testid="stImage"] img {
+
+    transition:
+        all 0.3s ease;
+}
+
+[data-testid="stImage"] img:hover {
+
+    transform:
+        scale(1.01);
+
+    box-shadow:
+        0 0 30px rgba(0, 212, 255, 0.16);
+}
+
+
+/* ==================================================
+   VIDEO
+   ================================================== */
+
+video {
+
+    border-radius:
+        16px;
+
+    box-shadow:
+        0 0 25px rgba(0, 212, 255, 0.08);
+}
+
+
+/* ==================================================
+   ALERT BOXES
+   ================================================== */
+
+[data-testid="stAlert"] {
+
+    border-radius:
+        15px;
+
+    border:
+        1px solid rgba(0, 212, 255, 0.16);
+}
+
+
+/* ==================================================
+   DIVIDERS
+   ================================================== */
+
+hr {
+
+    border-color:
+        rgba(0, 212, 255, 0.12) !important;
+}
+
+
+/* ==================================================
+   DATAFRAME
+   ================================================== */
+
+[data-testid="stDataFrame"] {
+
+    border-radius:
+        15px;
+
+    overflow:
+        hidden;
+}
+
+
+/* ==================================================
+   MOBILE
+   ================================================== */
+
+@media (max-width: 768px) {
+
+    .block-container {
+
+        padding-left:
+            1rem;
+
+        padding-right:
+            1rem;
+    }
+
+    h1 {
+
+        font-size:
+            2rem !important;
+    }
+
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 
 # ==================================================
@@ -32,24 +536,13 @@ initialize_database()
 
 
 # ==================================================
-# PAGE CONFIG
-# ==================================================
-
-st.set_page_config(
-    page_title="RealCheck AI",
-    page_icon="🔍",
-    layout="wide"
-)
-
-
-# ==================================================
 # TITLE
 # ==================================================
 
-st.title("🔍 RealCheck AI")
+st.title("◈ REALCHECK AI")
 
 st.subheader(
-    "Multimodal AI-Based Fake Media Detection and Prediction System"
+    "◈ Multimodal AI-Based Fake Media Detection and Prediction System"
 )
 
 st.write(
@@ -63,11 +556,11 @@ st.write(
 # ==================================================
 
 media_type = st.radio(
-    "Select Analysis Mode",
+    "◈ Select Analysis Mode",
     [
-        "🖼️ Image",
-        "🎥 Video",
-        "🔗 Multimodal Fusion"
+        "▣ Image",
+        "▶ Video",
+        "◇ Multimodal Fusion"
     ],
     horizontal=True
 )
@@ -77,10 +570,10 @@ media_type = st.radio(
 # IMAGE ANALYSIS
 # ==================================================
 
-if media_type == "🖼️ Image":
+if media_type == "▣ Image":
 
     uploaded_file = st.file_uploader(
-        "Upload Image",
+        "▣ Upload Image",
         type=[
             "jpg",
             "jpeg",
@@ -101,7 +594,7 @@ if media_type == "🖼️ Image":
         )
 
         if st.button(
-            "🔎 Start Image Analysis"
+            "◈ Start Image Analysis"
         ):
 
             image_path = None
@@ -303,7 +796,7 @@ if media_type == "🖼️ Image":
 
 
                 # ==========================================
-                # STEP 13 — PDF FORENSIC REPORT
+                # PDF FORENSIC REPORT
                 # ==========================================
 
                 st.divider()
@@ -422,10 +915,10 @@ if media_type == "🖼️ Image":
 # VIDEO ANALYSIS
 # ==================================================
 
-elif media_type == "🎥 Video":
+elif media_type == "▶ Video":
 
     uploaded_video = st.file_uploader(
-        "Upload Video",
+        "▶ Upload Video",
         type=[
             "mp4",
             "avi",
@@ -440,7 +933,7 @@ elif media_type == "🎥 Video":
         )
 
         if st.button(
-            "🔎 Start Video Analysis"
+            "▶ Start Video Analysis"
         ):
 
             video_path = None
@@ -768,7 +1261,7 @@ elif media_type == "🎥 Video":
 else:
 
     st.subheader(
-        "🔗 Multimodal Image + Video Analysis"
+        "◇ Multimodal Image + Video Analysis"
     )
 
     st.write(
@@ -783,7 +1276,7 @@ else:
     # ==========================================
 
     fusion_image_file = st.file_uploader(
-        "🖼️ Upload Image",
+        "▣ Upload Image",
         type=[
             "jpg",
             "jpeg",
@@ -798,7 +1291,7 @@ else:
     # ==========================================
 
     fusion_video_file = st.file_uploader(
-        "🎥 Upload Video",
+        "▶ Upload Video",
         type=[
             "mp4",
             "avi",
@@ -844,7 +1337,7 @@ else:
     ):
 
         if st.button(
-            "🚀 Start Multimodal Analysis"
+            "◇ Start Multimodal Analysis"
         ):
 
             image_path = None
@@ -1024,14 +1517,14 @@ else:
                 with col1:
 
                     st.metric(
-                        "🖼️ Image Fake Score",
+                        "▣ Image Fake Score",
                         f"{image_fake_score:.2f}%"
                     )
 
                 with col2:
 
                     st.metric(
-                        "🎥 Video Fake Score",
+                        "▶ Video Fake Score",
                         f"{video_fake_score:.2f}%"
                     )
 
@@ -1193,7 +1686,7 @@ else:
                 # ==========================================
 
                 st.subheader(
-                    "🎥 Video Evidence"
+                    "▶ Video Evidence"
                 )
 
                 col1, col2, col3 = st.columns(3)
@@ -1326,7 +1819,7 @@ else:
                 # ==========================================
 
                 st.markdown(
-                    "### 🖼️ Image Evidence"
+                    "### ▣ Image Evidence"
                 )
 
                 col1, col2 = st.columns(2)
@@ -1386,7 +1879,7 @@ else:
                 # ==========================================
 
                 st.markdown(
-                    "### 🎥 Video Evidence Record"
+                    "### ▶ Video Evidence Record"
                 )
 
                 col1, col2 = st.columns(2)
@@ -1449,7 +1942,7 @@ else:
 
 
                 # ==========================================
-                # STEP 13 — MULTIMODAL PDF REPORT
+                # MULTIMODAL PDF REPORT
                 # ==========================================
 
                 st.divider()
@@ -1602,6 +2095,7 @@ else:
             "multimodal analysis."
         )
 
+
 # ==================================================
 # ANALYSIS HISTORY
 # ==================================================
@@ -1619,16 +2113,34 @@ if history:
     for row in history:
 
         history_data.append({
+
             "ID": row["id"],
-            "Evidence ID": row["evidence_id"],
-            "File Name": row["file_name"],
-            "File Type": row["file_type"],
-            "Analysis Type": row["analysis_type"],
-            "Result": row["result"],
-            "Confidence": f'{row["confidence"]:.2f}%',
-            "Uncertainty": f'{row["uncertainty"]:.2f}%',
-            "Analysis Time": row["analysis_time"]
+
+            "Evidence ID":
+                row["evidence_id"],
+
+            "File Name":
+                row["file_name"],
+
+            "File Type":
+                row["file_type"],
+
+            "Analysis Type":
+                row["analysis_type"],
+
+            "Result":
+                row["result"],
+
+            "Confidence":
+                f'{row["confidence"]:.2f}%',
+
+            "Uncertainty":
+                f'{row["uncertainty"]:.2f}%',
+
+            "Analysis Time":
+                row["analysis_time"]
         })
+
 
     st.dataframe(
         history_data,
@@ -1636,7 +2148,10 @@ if history:
         hide_index=True
     )
 
-    if st.button("🗑️ Clear Analysis History"):
+
+    if st.button(
+        "🗑️ Clear Analysis History"
+    ):
 
         clear_analysis_history()
 

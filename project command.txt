@@ -1,0 +1,5 @@
+cd C:\RD_Project
+.\.venv\Scripts\Activate.ps1
+
+
+python -m streamlit run app.py

@@ -1,4 +1,3 @@
-
 import streamlit as st
 from PIL import Image
 import tempfile
@@ -21,6 +20,9 @@ from src.fusion import multimodal_fusion
 from src.confidence import calculate_confidence
 from src.evidence import create_evidence_record
 from src.report import create_pdf_report
+from src.background import render_3d_background
+from src.theme import apply_advanced_theme
+from src.ui_effects import apply_ui_effects
 
 from src.database import (
     initialize_database,
@@ -82,61 +84,6 @@ st.html(
 
         color: #f5f7ff;
         overflow-x: hidden;
-    }
-
-
-    /* ==============================================
-       MOVING 3D GRID
-       ============================================== */
-
-    .stApp::before {
-        content: "";
-        position: fixed;
-        left: -20%;
-        right: -20%;
-        bottom: -20%;
-        height: 65%;
-
-        background-image:
-            linear-gradient(
-                rgba(0, 210, 255, 0.12) 1px,
-                transparent 1px
-            ),
-            linear-gradient(
-                90deg,
-                rgba(0, 210, 255, 0.12) 1px,
-                transparent 1px
-            );
-
-        background-size: 70px 70px;
-
-        transform:
-            perspective(450px)
-            rotateX(62deg)
-            translateY(0);
-
-        transform-origin: center bottom;
-
-        animation: gridMove 8s linear infinite;
-
-        pointer-events: none;
-        z-index: 0;
-
-        mask-image: linear-gradient(
-            to top,
-            rgba(0,0,0,1),
-            rgba(0,0,0,0)
-        );
-    }
-
-    @keyframes gridMove {
-        from {
-            background-position: 0 0;
-        }
-
-        to {
-            background-position: 0 70px;
-        }
     }
 
 
@@ -677,6 +624,15 @@ st.html(
     </div>
     """
 )
+
+
+# ==================================================
+# 3D ANIMATED BACKGROUND
+# ==================================================
+
+render_3d_background()
+apply_advanced_theme()
+apply_ui_effects()
 
 
 # ==================================================

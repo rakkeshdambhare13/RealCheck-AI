@@ -1,36 +1,36 @@
+
+# Python virtual environments
 .venv/
+.venv*/
 venv/
 env/
 
+# Python cache
 __pycache__/
-*.pyc
+*.py[cod]
 
+# Secrets
 .env
 .streamlit/secrets.toml
 
+# Local test files and datasets
 test_images/
-
+dataset_download/
+datasets/
 *.mp4
 *.avi
 *.mov
 
+# Local database and logs
+realcheck.db
+test_evidence.txt
+*.log
+requirements_backup.txt
+
+# Editors
 .vscode/
 .idea/
 
-*.log
-
+# Operating system files
 .DS_Store
 Thumbs.db
-
-dataset_download/
-datasets/
-realcheck.db
-test_evidence.txt
-requirements_backup.txt
-
-
-dataset_download/
-datasets/
-realcheck.db
-test_evidence.txt
-requirements_backup.txt

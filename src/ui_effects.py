@@ -43,7 +43,7 @@ _UI_HTML = """
    ===================================================================== */
 const RC_FX_CSS = `
 /* ===================== BUTTON SYSTEM ===================== */
-.stApp .stButton > button,
+.stApp :is(.stButton, .stFormSubmitButton) > button,
 .stApp .stDownloadButton > button {
   position: relative;
   overflow: hidden;
@@ -61,32 +61,32 @@ const RC_FX_CSS = `
   transform: none;
   transition: transform .16s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease, filter .2s ease;
 }
-.stApp .stButton > button p,
+.stApp :is(.stButton, .stFormSubmitButton) > button p,
 .stApp .stDownloadButton > button p {
   margin: 0;
   color: inherit !important;
   font: inherit !important;
   letter-spacing: inherit;
 }
-.stApp .stButton > button > *,
+.stApp :is(.stButton, .stFormSubmitButton) > button > *,
 .stApp .stDownloadButton > button > * { position: relative; z-index: 1; }
 
 /* ---- Secondary (default) ---- */
-.stApp .stButton > button:hover,
+.stApp :is(.stButton, .stFormSubmitButton) > button:hover,
 .stApp .stDownloadButton > button:hover {
   transform: translateY(-1px);
   border-color: rgba(0,234,255,.6);
   background: rgba(0,234,255,.08);
   box-shadow: 0 8px 22px rgba(0,0,0,.35), 0 0 0 1px rgba(0,234,255,.16);
 }
-.stApp .stButton > button:active,
+.stApp :is(.stButton, .stFormSubmitButton) > button:active,
 .stApp .stDownloadButton > button:active {
   transform: translateY(0) scale(.985);
   box-shadow: inset 0 2px 6px rgba(0,0,0,.35);
 }
 
 /* ---- Primary ---- */
-.stApp .stButton > button[data-rc-variant="primary"],
+.stApp :is(.stButton, .stFormSubmitButton) > button[data-rc-variant="primary"],
 .stApp .stDownloadButton > button[data-rc-variant="primary"] {
   min-width: 250px;
   color: #03141f;
@@ -95,14 +95,14 @@ const RC_FX_CSS = `
   box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 10px 28px rgba(14,165,233,.36), 0 1px 2px rgba(0,0,0,.4);
   text-shadow: 0 1px 0 rgba(255,255,255,.25);
 }
-.stApp .stButton > button[data-rc-variant="primary"]:hover,
+.stApp :is(.stButton, .stFormSubmitButton) > button[data-rc-variant="primary"]:hover,
 .stApp .stDownloadButton > button[data-rc-variant="primary"]:hover {
   border-color: rgba(190,250,255,.9);
   background: linear-gradient(180deg, #3aeaff 0%, #12b6ef 55%, #0b8fd6 100%);
   filter: brightness(1.07) saturate(1.05);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 14px 36px rgba(14,165,233,.5), 0 1px 2px rgba(0,0,0,.4);
 }
-.stApp .stButton > button[data-rc-variant="primary"]::before {
+.stApp :is(.stButton, .stFormSubmitButton) > button[data-rc-variant="primary"]::before {
   content: "";
   position: absolute;
   top: 0; left: -60%;
@@ -113,15 +113,15 @@ const RC_FX_CSS = `
   pointer-events: none;
   z-index: 2;
 }
-.stApp .stButton > button[data-rc-variant="primary"]:hover::before { left: 130%; }
+.stApp :is(.stButton, .stFormSubmitButton) > button[data-rc-variant="primary"]:hover::before { left: 130%; }
 
 /* ---- Danger ---- */
-.stApp .stButton > button[data-rc-variant="danger"] {
+.stApp :is(.stButton, .stFormSubmitButton) > button[data-rc-variant="danger"] {
   color: #ff9aab;
   border-color: rgba(255,93,115,.5);
   background: rgba(255,59,92,.06);
 }
-.stApp .stButton > button[data-rc-variant="danger"]:hover {
+.stApp :is(.stButton, .stFormSubmitButton) > button[data-rc-variant="danger"]:hover {
   color: #ffd2da;
   border-color: rgba(255,93,115,.9);
   background: rgba(255,59,92,.16);
@@ -129,20 +129,20 @@ const RC_FX_CSS = `
 }
 
 /* ---- Focus + disabled ---- */
-.stApp .stButton > button:focus-visible,
+.stApp :is(.stButton, .stFormSubmitButton) > button:focus-visible,
 .stApp .stDownloadButton > button:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px rgba(45,226,255,.4), 0 0 0 1px rgba(45,226,255,.9);
 }
-.stApp .stButton > button:disabled,
+.stApp :is(.stButton, .stFormSubmitButton) > button:disabled,
 .stApp .stDownloadButton > button:disabled { opacity: .45; filter: saturate(.4); cursor: not-allowed; }
 
 /* ---- Loading ---- */
-.stApp .stButton > button[data-rc-busy],
+.stApp :is(.stButton, .stFormSubmitButton) > button[data-rc-busy],
 .stApp .stDownloadButton > button[data-rc-busy] { pointer-events: none; cursor: progress; padding-right: 48px; }
-.stApp .stButton > button[data-rc-busy] > *,
+.stApp :is(.stButton, .stFormSubmitButton) > button[data-rc-busy] > *,
 .stApp .stDownloadButton > button[data-rc-busy] > * { opacity: .6; }
-.stApp .stButton > button[data-rc-busy]::after,
+.stApp :is(.stButton, .stFormSubmitButton) > button[data-rc-busy]::after,
 .stApp .stDownloadButton > button[data-rc-busy]::after {
   content: "";
   position: absolute;
@@ -371,7 +371,7 @@ function rcFx() {
   const sig = ac.signal;
   const timers = [];
 
-  const BTN = ".stApp .stButton > button, .stApp .stDownloadButton > button";
+  const BTN = ".stApp :is(.stButton, .stFormSubmitButton) > button, .stApp .stDownloadButton > button";
   const TAB = 'div[role="radiogroup"] > label';
   const reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
@@ -379,7 +379,7 @@ function rcFx() {
   function classify(b) {
     const tx = (b.textContent || "").toLowerCase();
     let v = "secondary";
-    if (b.getAttribute("kind") === "primary" || b.getAttribute("data-testid") === "stBaseButton-primary") v = "primary";
+    if (/^primary/.test(b.getAttribute("kind") || "") || /^stBaseButton-primary/.test(b.getAttribute("data-testid") || "")) v = "primary";
     else if (/clear|delete|remove|reset/.test(tx)) v = "danger";
     else if (/download|export|report|save/.test(tx)) v = "secondary";
     else if (/start|analy|run|scan|detect|verify/.test(tx)) v = "primary";

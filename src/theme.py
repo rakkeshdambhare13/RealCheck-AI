@@ -618,6 +618,39 @@ div[data-testid="stCode"] code {
 
 
 /* ==================================================
+   FORMS + INPUTS (sign-in, registration, history filters)
+   ================================================== */
+
+div[data-testid="stForm"] {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(0, 234, 255, 0.22);
+    border-radius: 22px;
+    padding: 1.4rem 1.4rem 1rem;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.22), inset 0 0 40px rgba(0, 234, 255, 0.03);
+}
+
+div[data-baseweb="input"],
+div[data-baseweb="select"] > div {
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 234, 255, 0.28);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+div[data-baseweb="input"]:focus-within,
+div[data-baseweb="select"] > div:focus-within {
+    border-color: var(--rc-cyan);
+    box-shadow: 0 0 0 3px rgba(0, 234, 255, 0.18), 0 0 20px rgba(0, 234, 255, 0.18);
+}
+
+div[data-baseweb="input"] input {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: calc(var(--rc-u) * 15);
+}
+
+
+/* ==================================================
    SCROLLBAR + SELECTION
    ================================================== */
 

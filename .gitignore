@@ -34,3 +34,5 @@ requirements_backup.txt
 # Operating system files
 .DS_Store
 Thumbs.db
+
+data/realcheck_users.db
